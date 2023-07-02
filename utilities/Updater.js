@@ -16,14 +16,26 @@ async function RunUpdate() {
     const Collections = [];
     users.forEach(async (u) => {
         try {
-            const client = await getXRPClient();
-            const response = await client.request({
-                command: "account_nfts",
-                account: u,
-                ledger_index: "validated",
-            });
+            var nftsall = []
+            var marker = 1
+            while (marker !== null) {
+                var request = {
+                    command: "account_nfts",
+                    account: wallet,
+                    ledger_index: "validated",
+                    limit: 1000,
+                }
+                if (marker !== 1) request.marker = marker;
+                const response = await client.request(request);
+                nftsall = nftsall.concat(response.result.account_nfts);
+                if (response.result.marker !== undefined) {
+                    marker = response.result.marker;
+                } else {
+                    marker = null;
+                }
+            }
             client.disconnect();
-            const nftsall = response.result.account_nfts;
+            // const nftsall = response.result.account_nfts;
             for (const n of nftsall) {
                 if (!Collections.includes(`${n.Issuer}:${n.NFTokenTaxon}`)) {
                     const collection = { issuer: n.Issuer, taxon: n.NFTokenTaxon, floor: 0 };
@@ -33,7 +45,7 @@ async function RunUpdate() {
                     }
                     Collections.push(`${n.Issuer}:${n.NFTokenTaxon}`);
                     await setCollection(collection);
-                    await wait(6000);
+                    await wait(10000);
                 }
             }
         }
