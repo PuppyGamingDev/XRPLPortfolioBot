@@ -8,6 +8,7 @@ const wait = (t) => new Promise((s) => setTimeout(s, t, t));
 
 const Users = new Map();
 const Collections = new Map();
+const Tokens = new Map();
 
 const reloadUsers = async () => {
     await mongoConnect();
@@ -16,7 +17,7 @@ const reloadUsers = async () => {
     for (const user of users) {
         Users.set(user._id, user.wallet);
     }
-    return;
+    console.log(`Refreshed Users`);
 };
 
 const reloadCollections = async () => {
@@ -26,6 +27,27 @@ const reloadCollections = async () => {
     for (const c of collections) {
         Collections.set(c._id, { taxon: c.taxon, issuer: c.issuer, floor: c.floor });
     }
+    console.log(`Refreshed Collections`);
+};
+
+const reloadTokens = async () => {
+    var offset = 0;
+    while (offset !== null) {
+        try {
+            const response = await axios.get(`https://s1.xrplmeta.org/tokens?limit=1000&offset=${offset}`);
+            for (const token of response.data.tokens) {
+                Tokens.set(`${token.issuer}:${token.currency}`, token.metrics.price);
+            }
+            offset = response.data.tokens.length < 999 ? null : offset + 1000;
+        } catch (err) {
+            //Err
+        }
+    }
+    console.log(`Refreshed Tokens`);
+};
+
+const tokenValue = (token) => {
+    return Tokens.get(token);
 };
 
 const getUserWallet = (userId) => {
@@ -45,6 +67,7 @@ const addCollection = async (issuer, taxon) => {
                 if (c.currency === "XRP") collection.floor = parseInt(xrpl.dropsToXrp(c.amount));
             }
         }
+        await wait(10000);
     } catch (err) {
         // Error
     }
@@ -58,7 +81,7 @@ const setCollection = async (c) => {
     await mongoConnect();
     await collectionSchema.findOneAndUpdate({ _id: id }, { floor: c.floor }, { upsert: true });
     return;
-}
+};
 
 const addUserWallet = async (userId, wallet) => {
     await mongoConnect();
@@ -76,7 +99,7 @@ const addUserWallet = async (userId, wallet) => {
         if (!hasCollection(n.Issuer, n.NFTokenTaxon)) {
             await addCollection(n.Issuer, n.NFTokenTaxon);
             await wait(10000);
-        };
+        }
     });
     return;
 };
@@ -87,6 +110,6 @@ const getUsers = () => {
 
 const getCollection = (id) => {
     return Collections.get(id);
-}
+};
 
-module.exports = { reloadUsers, reloadCollections, getUserWallet, addUserWallet, setCollection, getUsers, getCollection };
+module.exports = { reloadUsers, reloadCollections, getUserWallet, addUserWallet, setCollection, getUsers, getCollection, reloadTokens, tokenValue };

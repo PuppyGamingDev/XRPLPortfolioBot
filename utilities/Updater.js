@@ -1,18 +1,21 @@
 require("dotenv/config");
 const axios = require("axios");
-const { getUsers, setCollection } = require("./Storage");
+const { getUsers, setCollection, reloadTokens } = require("./Storage");
 const schedule = require("node-schedule");
 const { getXRPClient } = require("./Connections");
 const xrpl = require("xrpl");
 const wait = (t) => new Promise((s) => setTimeout(s, t, t));
 
-const job = schedule.scheduleJob("*/20 * * * *", async function () {
-    await RunUpdate();
+const Collections = schedule.scheduleJob("*/20 * * * *", async function () {
+    await RunCollections();
 });
 
-async function RunUpdate() {
-    const users = getUsers();
+const tokens = schedule.scheduleJob("*/30 * * * *", async function () {
+    await reloadTokens();
+});
 
+async function RunCollections() {
+    const users = getUsers();
     const Collections = [];
     users.forEach(async (u) => {
         try {
@@ -46,13 +49,13 @@ async function RunUpdate() {
                     }
                     Collections.push(`${n.Issuer}:${n.NFTokenTaxon}`);
                     await setCollection(collection);
-                    await wait(10000);
+                    await wait(12000);
                 }
             }
         }
         catch (err) {
             console.log(err);
-           await wait(6000);
+           await wait(12000);
         }
     });
 

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, Colors } = require("discord.js");
-const { getUserWallet, getCollection } = require("../utilities/Storage");
+const { getUserWallet, getCollection, tokenValue } = require("../utilities/Storage");
 const { getXRPClient } = require("../utilities/Connections");
 const xrpl = require('xrpl');
 
@@ -39,9 +39,22 @@ module.exports = {
                 account: wallet,
                 ledger_index: "validated",
             });
+            const linesresponse = await client.request({
+                command: "account_lines",
+                account: wallet,
+            });
             client.disconnect();
             const collections = {}
-            // const nftsalla = response.result.account_nfts;
+            const lines = linesresponse.result.lines;
+            var tokentotals = 0;
+            if (lines.length > 0) {
+                lines.forEach(l => {
+                    const value = tokenValue(`${l.account}:${l.currency}`)
+                    if (value !== undefined) {
+                        tokentotals += parseFloat(l.balance) * parseFloat(value)
+                    }
+                });
+            }
             nftsall.forEach(async (n) => {
                 if (!collections[`${n.Issuer}:${n.NFTokenTaxon}`] || collections[`${n.Issuer}:${n.NFTokenTaxon}`] === undefined) {
                     collections[`${n.Issuer}:${n.NFTokenTaxon}`] = 1
@@ -60,10 +73,10 @@ module.exports = {
                 const amount = collections[k];
                 totalvalue += amount * c.floor;
             }
-
+            const overall = totalvalue + balance + tokentotals;
             const portEmbed = new EmbedBuilder()
                 .setTitle(interaction.user.username)
-                .setDescription(`Here is the estimated figures for your wallet:\n\nYou wallet is worth: **${totalvalue + balance}** XRP\nWhile holding a total of: **${nftsall.length}** NFTs worth: **${totalvalue}** XRP\nAnd currently: **${balance}** XRP\n\n*(if you recently linked and introduced new collections, these may be awaiting data)*`);
+                .setDescription(`Here is the estimated figures for your wallet:\n\nYou wallet is worth: **${overall.toFixed(4)}** XRP\nWhile holding a total of: **${nftsall.length}** NFTs worth: **${totalvalue}** XRP\nCurrently: **${balance}** XRP\nAnd **${tokentotals.toFixed(4)}** XRP in **${lines.length}** TrustLines\n\n*(if you recently linked and introduced new collections, these may be awaiting data)*`);
 
             await interaction.editReply({ embeds: [portEmbed] });
             return;

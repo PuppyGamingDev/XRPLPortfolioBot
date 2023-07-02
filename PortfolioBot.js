@@ -4,7 +4,7 @@ const path = require("node:path");
 const { Client, Collection, GatewayIntentBits, Events } = require("discord.js");
 require("dotenv/config");
 const mongoConnect = require("./utilities/mongo-connect");
-const { reloadUsers, reloadCollections } = require("./utilities/Storage");
+const { reloadUsers, reloadCollections, reloadTokens } = require("./utilities/Storage");
 require('./utilities/Updater');
 
 // Declare needed Intents
@@ -30,6 +30,7 @@ client.once(Events.ClientReady, async () => {
     await mongoConnect();
     await reloadUsers();
     await reloadCollections();
+    await reloadTokens();
     console.log(`XRPL Portfolio Bot is running`);
 });
 
