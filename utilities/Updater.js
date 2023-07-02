@@ -23,7 +23,7 @@ async function RunUpdate() {
                     command: "account_nfts",
                     account: wallet,
                     ledger_index: "validated",
-                    limit: 1000,
+                    limit: 400,
                 }
                 if (marker !== 1) request.marker = marker;
                 const response = await client.request(request);
