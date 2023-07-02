@@ -62,6 +62,8 @@ const setCollection = async (c) => {
 
 const addUserWallet = async (userId, wallet) => {
     await mongoConnect();
+    Users.set(userId, wallet);
+    await userSchema.findOneAndUpdate({ _id: userId }, { wallet: wallet }, { upsert: true });
     const client = await getXRPClient();
     const response = await client.request({
         command: "account_nfts",
@@ -70,16 +72,12 @@ const addUserWallet = async (userId, wallet) => {
     });
     client.disconnect();
     const nftsall = response.result.account_nfts;
-    const nfts = [];
     nftsall.forEach(async (n) => {
-        nfts.push({ id: n.NFTokenID, issuer: n.Issuer, taxon: n.NFTokenTaxon, uri: n.URI });
         if (!hasCollection(n.Issuer, n.NFTokenTaxon)) {
             await addCollection(n.Issuer, n.NFTokenTaxon);
-            await wait(6000);
+            await wait(10000);
         };
     });
-    await userSchema.findOneAndUpdate({ _id: userId }, { wallet: wallet, nfts: nfts }, { upsert: true });
-    Users.set(userId, { wallet: wallet, nfts: nfts });
     return;
 };
 
