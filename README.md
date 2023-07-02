@@ -22,7 +22,7 @@ While they are installing you can begin gathering your information for the `.env
 - `TOKEN` and `CLIENTID` are your Bot Token and Client ID from Discord Application > [GUIDE HERE](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot)
 - `MONGOURI` is a MongoDB Connection String > [GUIDE HERE](https://www.mongodb.com/docs/guides/atlas/connection-string/)
 - `XUMM_API_KEY` and `XUMM_API_SECRET` require you to create an application with XUMM and get the values > [GUIDE HERE](https://xumm.readme.io/docs/register-your-app)
-- `NETWORK` is the RPC you will be connecting to. I DO NOT SUGGEST using a public network as you will easily get ratelimited. You can get a generous one for free and even fairly priced tiers through (Get a nice free one through [QuickNode](https://www.quicknode.com?tap_a=67226-09396e&tap_s=3536451-d11bb1&utm_source=affiliate&utm_campaign=generic&utm_content=affiliate_landing_page&utm_medium=generic)) who now feature XRPL!
+- `NETWORK` is the RPC you will be connecting to. I DO NOT SUGGEST using a public network as you will easily get ratelimited. You can get a generous one for free and even fairly priced tiers through [QuickNode](https://www.quicknode.com?tap_a=67226-09396e&tap_s=3536451-d11bb1&utm_source=affiliate&utm_campaign=generic&utm_content=affiliate_landing_page&utm_medium=generic) who now feature XRPL!
 
 Once you have all your values, close & open the terminal (avoids any issues with it not reading the .env values) and then in the console run `node deploy-commands.js` and it will register the Bot's commands globally so any server the bot is in will be able to use them.
 
