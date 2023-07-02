@@ -16,6 +16,7 @@ async function RunUpdate() {
     const Collections = [];
     users.forEach(async (u) => {
         try {
+            const client = await getXRPClient();
             var nftsall = []
             var marker = 1
             while (marker !== null) {
