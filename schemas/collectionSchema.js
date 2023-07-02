@@ -5,9 +5,15 @@ const collectionSchema = new mongoose.Schema({
 		type: mongoose.SchemaTypes.String,
 		required: true,
 	},
-	wallet: {
+	issuer: {
 		type: mongoose.SchemaTypes.String,
 	},
+    taxon: {
+        type: mongoose.SchemaTypes.Number,
+    },
+    floor: {
+        type: mongoose.SchemaTypes.Number,
+    },
 
 });
 const name = 'collection';

@@ -33,7 +33,7 @@ module.exports = {
 
 			const transactEmbed = new EmbedBuilder()
 				.setTitle(`Link your wallet`)
-				.setDescription(`Scan or visit the transaction link to continue\nThis enables the ability for Whitelists to take effect.`)
+				.setDescription(`Scan or visit the transaction link to continue.`)
 				.setColor(Colors.Aqua)
 				.setFields(
 					{ name: `Transaction Link`, value: `[Click Here](${subscription.created.next.always})` },
@@ -53,7 +53,6 @@ module.exports = {
 			// Confirm with user and add to Users Map
 			await interaction.editReply({ content: `Linked with wallet **${sender}**`, embeds: [], ephemeral: true });
 			await addUserWallet(interaction.user.id, sender);
-			await interaction.editReply({ content: `Success! Whitelists can now apply to you!`, embeds: [], ephemeral: true });
 			return;
 		}
 		catch (err) {
