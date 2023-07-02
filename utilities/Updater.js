@@ -21,7 +21,7 @@ async function RunUpdate() {
             while (marker !== null) {
                 var request = {
                     command: "account_nfts",
-                    account: wallet,
+                    account: u,
                     ledger_index: "validated",
                     limit: 400,
                 }
