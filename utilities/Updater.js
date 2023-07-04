@@ -40,7 +40,8 @@ async function RunCollections() {
             }
             client.disconnect();
             // const nftsall = response.result.account_nfts;
-            for (const n of nftsall) {
+            for (i = 0; i < nftsall.length; i++) {
+                const n = nftsall[i];
                 if (!Collections.includes(`${n.Issuer}:${n.NFTokenTaxon}`)) {
                     const collection = { issuer: n.Issuer, taxon: n.NFTokenTaxon, floor: 0 };
                     const result = await axios.get(`https://api.xrpldata.com/api/v1/xls20-nfts/stats/issuer/${n.Issuer}/taxon/${n.NFTokenTaxon}`);

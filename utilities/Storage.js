@@ -87,20 +87,20 @@ const addUserWallet = async (userId, wallet) => {
     await mongoConnect();
     Users.set(userId, wallet);
     await userSchema.findOneAndUpdate({ _id: userId }, { wallet: wallet }, { upsert: true });
-    const client = await getXRPClient();
-    const response = await client.request({
-        command: "account_nfts",
-        account: wallet,
-        ledger_index: "validated",
-    });
-    client.disconnect();
-    const nftsall = response.result.account_nfts;
-    nftsall.forEach(async (n) => {
-        if (!hasCollection(n.Issuer, n.NFTokenTaxon)) {
-            await addCollection(n.Issuer, n.NFTokenTaxon);
-            await wait(10000);
-        }
-    });
+    // const client = await getXRPClient();
+    // const response = await client.request({
+    //     command: "account_nfts",
+    //     account: wallet,
+    //     ledger_index: "validated",
+    // });
+    // client.disconnect();
+    // const nftsall = response.result.account_nfts;
+    // nftsall.forEach(async (n) => {
+    //     if (!hasCollection(n.Issuer, n.NFTokenTaxon)) {
+    //         await addCollection(n.Issuer, n.NFTokenTaxon);
+    //         await wait(10000);
+    //     }
+    // });
     return;
 };
 
