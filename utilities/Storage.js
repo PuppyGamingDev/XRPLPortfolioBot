@@ -43,7 +43,6 @@ const reloadTokens = async () => {
             //Err
         }
     }
-    console.log(`Refreshed Tokens`);
 };
 
 const tokenValue = (token) => {

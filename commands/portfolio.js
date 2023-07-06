@@ -33,7 +33,7 @@ module.exports = {
                     marker = null;
                 }
             }
-            
+
             const accountresponse = await client.request({
                 command: "account_info",
                 account: wallet,
@@ -74,9 +74,15 @@ module.exports = {
                 totalvalue += amount * c.floor;
             }
             const overall = totalvalue + balance + tokentotals;
+
+            const totaltext = `__**Total:**__ *${overall.toFixed(2)} XRP*`;
+            const xrptext = `__**Balance:**__ *${balance} XRP*`;
+            const nftstext = `__**NFTs Balance:**__ *${totalvalue.toFixed(2)} XRP* from *${nftsall.length} NFTs*`;
+            const tokenstext = `__**Tokens Balance:**__ *${tokentotals.toFixed(2)} XRP* from *${lines.length} TrustLines*`;
+
             const portEmbed = new EmbedBuilder()
                 .setTitle(interaction.user.username)
-                .setDescription(`Here is the estimated figures for your wallet:\n\nYou wallet is worth: **${overall.toFixed(4)}** XRP\nWhile holding a total of: **${nftsall.length}** NFTs worth: **${totalvalue}** XRP\nCurrently: **${balance}** XRP\nAnd **${tokentotals.toFixed(4)}** XRP in **${lines.length}** TrustLines\n\n*(if you recently linked and introduced new collections, these may be awaiting data)*`);
+                .setDescription(`**Here are your estimated portfolio figures**\n\n${totaltext}\n\n${xrptext}\n\n${nftstext}\n\n${tokenstext}\n\n*(if you recently linked and introduced new collections, these may be awaiting data)*`);
 
             await interaction.editReply({ embeds: [portEmbed] });
             return;
