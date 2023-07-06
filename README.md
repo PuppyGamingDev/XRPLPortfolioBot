@@ -43,7 +43,9 @@ Will grab your wallet estimate!
 While you are having fun, why not send me a tip if you feel I deserve it :)
 
 ## Extra Notes
-The bot will update colleciton floor prices every 20 minutes using the [xrpl.services](https://api.xrpldata.com/docs/static/index.html) API. Also initially when a wallet is linked, it will go through their NFTs to see if there are any collections it doesn't yet know and get the floor prices.
+The bot will update colleciton floor prices every 20 minutes using the [xrpl.services](https://api.xrpldata.com/docs/static/index.html) API for any collection found in all of the accounts linked. Newly linked accounts that contain new collections not currently known will need to wait till the next update.
+
+Also every 30 minutes the bot will refresh its Token prices from [xrplmeta](https://xrplmeta.org/) API.
 
 ## Finishing up
 If you have any questions, my DMs are always open on

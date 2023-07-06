@@ -6,11 +6,11 @@ const { getXRPClient } = require("./Connections");
 const xrpl = require("xrpl");
 const wait = (t) => new Promise((s) => setTimeout(s, t, t));
 
-const Collections = schedule.scheduleJob("*/20 * * * *", async function () {
+const Collections = schedule.scheduleJob("*/20 * * * *", async function() {
     await RunCollections();
 });
 
-const tokens = schedule.scheduleJob("*/30 * * * *", async function () {
+const tokens = schedule.scheduleJob("*/30 * * * *", async function() {
     await reloadTokens();
 });
 
@@ -42,23 +42,30 @@ async function RunCollections() {
             // const nftsall = response.result.account_nfts;
             for (i = 0; i < nftsall.length; i++) {
                 const n = nftsall[i];
-                if (!Collections.includes(`${n.Issuer}:${n.NFTokenTaxon}`)) {
-                    const collection = { issuer: n.Issuer, taxon: n.NFTokenTaxon, floor: 0 };
-                    const result = await axios.get(`https://api.xrpldata.com/api/v1/xls20-nfts/stats/issuer/${n.Issuer}/taxon/${n.NFTokenTaxon}`);
-                    for (const c of result.data.data.collection_info.floor) {
-                        if (c.currency === "XRP") collection.floor = parseInt(xrpl.dropsToXrp(c.amount));
-                    }
-                    Collections.push(`${n.Issuer}:${n.NFTokenTaxon}`);
-                    await setCollection(collection);
-                    await wait(12000);
-                }
+                if (!Collections.includes(`${n.Issuer}:${n.NFTokenTaxon}`)) Collections.push(`${n.Issuer}:${n.NFTokenTaxon}`);
             }
         }
         catch (err) {
             console.log(err);
-           await wait(12000);
+            await wait(12000);
         }
     });
+    for (const c of Collections) {
+        const s = c.split(':')
+        const collection = { issuer: s[0], taxon: s[1], floor: 0 };
+        try {
+            const result = await axios.get(`https://api.xrpldata.com/api/v1/xls20-nfts/stats/issuer/${s[0]}/taxon/${s[1]}`);
+            for (const r of result.data.data.collection_info.floor) {
+                if (r.currency === "XRP") collection.floor = parseInt(xrpl.dropsToXrp(r.amount));
+            }
+            await setCollection(collection);
+            await wait(10000);
+        }
+        catch (err) {
+            console.log(err);
+            await wait(12000);
+        }
+    }
 
     return;
 }
